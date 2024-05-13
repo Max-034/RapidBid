@@ -32,9 +32,6 @@ app.post("/register" , async (req,res) =>
     const user = req.body.username;
     const pass = req.body.password;
 
-
-
-
     bcrypt.hash(pass, saltr, async function(err, hash) {
         const { data, error } = await supabase
     .from('Users')
@@ -49,8 +46,7 @@ app.post("/register" , async (req,res) =>
     .eq('username', user);
 
     userr = userr.data[0];
-
-
+    
     req.login(userr, (err) => {
       console.log("success");
       res.redirect("/register");
@@ -61,8 +57,6 @@ app.post("/register" , async (req,res) =>
     
 console.log(user);
 
-
-
 })
 
 app.get("/register" , async (req,res) =>
@@ -71,23 +65,22 @@ app.get("/register" , async (req,res) =>
         res.send("step1done");
     }
     else{
-        res.send("getbetter");
+        res.send("ge");
     }
 })
 
-app.get("/test" , async (req, res) =>
-    {
-    var userr = await supabase
-    .from('Users')
-    .select()
-    .eq('username', 'paya');
+// app.get("/test" , async (req, res) =>
+//     {
+//     var userr = await supabase
+//     .from('Users')
+//     .select()
+//     .eq('username', 'paya');
 
-    res.send(userr);
-})
+//     res.send(userr);
+// })
 
 
-app.post(
-    "/login",
+app.post("/login",
     passport.authenticate("local", {
       successRedirect: "/register",
       failureRedirect: "/login",
@@ -109,15 +102,12 @@ app.post(
           const storedHashedPassword = user.password;
           bcrypt.compare(password, storedHashedPassword, (err, valid) => {
             if (err) {
-              //Error with password check
               console.error("Error comparing passwords:", err);
               return cb(err);
             } else {
               if (valid) {
-                //Passed password check
                 return cb(null, user);
               } else {
-                //Did not pass password check
                 return cb(null, false);
               }
             }
