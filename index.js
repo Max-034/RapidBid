@@ -5,7 +5,11 @@ import bcrypt from "bcrypt";
 import session from "express-session";
 import passport from "passport";
 import { Strategy } from "passport-local";
+import multer from "multer";
+import { decode } from "base64-arraybuffer";
 
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 const supabase = createClient('https://qhryeiuegymozsriktoh.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFocnllaXVlZ3ltb3pzcmlrdG9oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTU1MzczODEsImV4cCI6MjAzMTExMzM4MX0.e-dm_pqJ6blrjPe8dTqtSuGv24cRnbA3aYfQtKt_N6E')
 const app = express();
@@ -21,6 +25,8 @@ app.use(session({
 
 
 app.use(bodyParser.urlencoded({ extended: false }));
+
+
 
 app.use(express.static("public"));
 
@@ -46,7 +52,7 @@ app.post("/register" , async (req,res) =>
     .eq('username', user);
 
     userr = userr.data[0];
-    
+
     req.login(userr, (err) => {
       console.log("success");
       res.redirect("/register");
@@ -62,21 +68,39 @@ console.log(user);
 app.get("/register" , async (req,res) =>
 {
     if (req.isAuthenticated()){
-        res.send("step1done");
+        res.send(req.user);
     }
     else{
         res.send("ge");
     }
 })
 
-// app.get("/test" , async (req, res) =>
-//     {
-//     var userr = await supabase
-//     .from('Users')
-//     .select()
-//     .eq('username', 'paya');
+const array = [
+    
+    {name: 'item' , maxCount: 1}
+]
 
-//     res.send(userr);
+// app.post("/test" , upload.fields(array), async (req, res, next) =>
+//     {
+//         const filee = req.files.item[0];
+
+//         const fileBase64 = decode(filee.buffer.toString("base64"));
+        
+//         const { data, error } = await supabase
+//   .storage
+//   .from('image')
+//   .upload( 'item1/f.png' , fileBase64, {
+//     contentType: "image/png",
+//   })
+
+
+
+  
+
+//   res.send(user.password);
+
+
+  
 // })
 
 
@@ -86,6 +110,33 @@ app.post("/login",
       failureRedirect: "/login",
     })
   );
+
+
+  app.post("/new-item" , upload.fields(array) , async(req , res , next) =>
+{
+    if(req.isAuthenticated())
+        {
+    const file = req.files.item[0];
+    const fileBase64 = decode(file.buffer.toString("base64"));
+    const { data, error } = await supabase.storage.from('image').upload( '/' + req.user.username + '/item.png'  , fileBase64, {contentType: "image/png",})
+    await supabase.storage.from('image').upload( '/' + req.user.username + '/desc.txt'  , req.body.desc);
+    await supabase.storage.from('image').upload( '/' + req.user.username + '/name.txt'  , req.body.name);
+    await supabase.storage.from('image').upload( '/' + req.user.username + '/basep.txt'  , req.body.basep);
+
+    res.redirect('/new-item');
+        }
+        else{
+            res.redirect('/login')
+        }
+    
+
+    //res.send(req.files.item);
+
+})
+
+
+
+
 
 
 
