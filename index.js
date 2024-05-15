@@ -118,19 +118,21 @@ app.post("/login",
         {
     const file = req.files.item[0];
     const fileBase64 = decode(file.buffer.toString("base64"));
-    const { data, error } = await supabase.storage.from('image').upload( '/' + req.user.username + '/item.png'  , fileBase64, {contentType: "image/png",})
-    await supabase.storage.from('image').upload( '/' + req.user.username + '/desc.txt'  , req.body.desc);
-    await supabase.storage.from('image').upload( '/' + req.user.username + '/name.txt'  , req.body.name);
-    await supabase.storage.from('image').upload( '/' + req.user.username + '/basep.txt'  , req.body.basep);
+    const { data, error } = await supabase.storage.from('image').upload( '/' + req.user.username + '/item' + req.user.items + '/item.png' , fileBase64, {contentType: "image/png",})
+    await supabase.storage.from('image').upload( '/' + req.user.username + '/item' + req.user.items +'/desc.txt'  , req.body.desc);
+    await supabase.storage.from('image').upload( '/' + req.user.username + '/item' + req.user.items +'/name.txt'  , req.body.name);
+    await supabase.storage.from('image').upload( '/' + req.user.username + '/item' + req.user.items +'/basep.txt'  , req.body.basep);
 
-    res.redirect('/new-item');
+
+    await supabase.from('Users').update({ items: req.user.items++ }).eq('username', req.user.username).select()
+        
+
+    res.send(req.files.item[0])
         }
-        else{
+        else
+        {
             res.redirect('/login')
         }
-    
-
-    //res.send(req.files.item);
 
 })
 
@@ -149,7 +151,7 @@ app.post("/login",
         .eq('username', username);
 
         if (result.data.length > 0) {
-          const user = result.data[2];
+          const user = result.data[0];
           const storedHashedPassword = user.password;
           bcrypt.compare(password, storedHashedPassword, (err, valid) => {
             if (err) {
