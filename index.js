@@ -75,6 +75,11 @@ supabase
   .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'trades' }, handleInserts)
   .subscribe()
 
+  // supabase
+  // .channel('trades')
+  // .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'trades' }, handleInserts)
+  // .subscribe()
+
 
 
 
@@ -86,7 +91,7 @@ const sessionmiddleware = session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-      httpOnly: false,
+      httpOnly: true,
     } , 
   
 });
@@ -217,10 +222,27 @@ const array = [
     {name: 'item' , maxCount: 1}
 ]
 
+app.get('/logout' , async(req,res) => {
+  console.log("ahs")
+  
+req.session.destroy(err => {
+  if (err) {
+    res.redirect('/')
+
+  } else {
+    res.send('Logout successful')
+  }
+});
+
+});
+
 
 
   app.post("/new-item" , isAuthenticated , upload.fields(array) , async(req , res , next) =>
 {
+
+  
+
 
     const file = req.files.item[0];
     const fileBase64 = decode(file.buffer.toString("base64"));
@@ -232,11 +254,11 @@ const array = [
   .from('image')
   .getPublicUrl('/' + req.session.user.username + '/item' + req.session.user.items + '/item.png');
 
-  
+
    await supabase
   .from('trades')
   .insert([
-    { path: data.publicUrl, desc: req.body.desc , basep: req.body.basep , name: req.body.name },
+    {path: data.publicUrl , desc: req.body.desc , basep: req.body.basep , name: req.body.name , dur: req.body.dur },
   ])
   .select()
 
@@ -255,7 +277,7 @@ const array = [
 app.get('/auth' , async(req , res) => {
 
   console.log(req.session);
-  if(req.session.user)
+  if(req.session.user != null)
   {
     res.send({user: req.session.user});
   }
