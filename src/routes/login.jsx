@@ -12,7 +12,7 @@ import { redirect } from "react-router-dom";
 
 
 
-export default function Login() 
+export default function Login({log , lo}) 
 {
     
 
@@ -33,8 +33,12 @@ export default function Login()
 
            if(respo.data.user)
            {
+            log();
             setAuth(false);
-            setLoading(false);
+            //etLoading(false);
+            
+            
+            console.log(auth);
         //    return redirect('/dashboard')
            }
            else{
@@ -60,7 +64,7 @@ export default function Login()
 
     return(
 
-        auth ? 
+        !lo ? 
 
         <div>
 

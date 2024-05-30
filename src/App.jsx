@@ -36,6 +36,7 @@ function App() {
           setIsLoggedIn(true);
           setLoading(false);
           setUser(response.data.user.username);
+          
         }
         else{
           setLoading(false);
@@ -58,7 +59,7 @@ return (
       <Routes>
         <Route path='/' element={<Lp />} />
         <Route path='/signup' element={<Signup />} />
-        <Route path='/login' element={<Login />} />
+        <Route path='/login' element={<Login log = {setIsLoggedIn} lo = {isLoggedIn}/>} />
         
         <Route path='/homepage' element= {<Nav auth = {isLoggedIn} user = {user} />} >
         <Route path='dashboard' element= {<Dashboard auth = {isLoggedIn} user = {user} />} />

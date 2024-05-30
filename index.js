@@ -240,6 +240,8 @@ req.session.destroy(err => {
 
   app.post("/new-item" , isAuthenticated , upload.fields(array) , async(req , res , next) =>
 {
+    console.log(req);
+
 
   
 

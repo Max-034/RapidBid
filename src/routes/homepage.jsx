@@ -17,6 +17,8 @@ import { Navigate, useNavigate , Link } from 'react-router-dom';
 //import Login from '../login';
 import { Outlet } from "react-router-dom";
 //import {Socket} from '../socket.js';
+import axios from 'axios';
+import {useCookies}   from 'react-cookie';
 
 
 
@@ -26,9 +28,7 @@ export default function Nav({auth , user}) {
   const [open, setOpen] = React.useState(false);
   
 
-(req,res) => {
-    console.log(req.session)
-}
+const [cookies, setCookie, removeCookie] = useCookies(['connect.sid']);
 
 
 
@@ -65,16 +65,9 @@ export default function Nav({auth , user}) {
       </List>
       <Divider />
       <List>
-        {['Logout', 'Trash'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <MailIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+
+      <input type = 'submit' onClick={() => removeCookie({path: '/'})}></input>
+  
       </List>
     </Box>
   );
