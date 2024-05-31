@@ -36,29 +36,20 @@ const io = new Server(server , {
 });
 
 
-
-
-
 io.on('connection' , async (socket) => {
-
 
 let { data: trades, error } = await supabase
   .from('trades')
   .select('*')
 
-  //console.log(trades);
-
   io.emit('chat' , 'hi')
 
   io.emit('trades' , trades);
-
- 
 
   });
 
    
 const handleInserts = async (payload) => {
-  // console.log('Change received!', payload)
   let { data: trades, error } = await supabase
   .from('trades')
   .select('*')
@@ -69,22 +60,11 @@ const handleInserts = async (payload) => {
   
 }
 
-
 supabase
   .channel('trades')
   .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'trades' }, handleInserts)
   .subscribe()
 
-  // supabase
-  // .channel('trades')
-  // .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'trades' }, handleInserts)
-  // .subscribe()
-
-
-
-
-
-// Middleware
 
 const sessionmiddleware = session({
     secret: "parth",
@@ -97,15 +77,12 @@ const sessionmiddleware = session({
 });
 
 
-
 app.use(sessionmiddleware);
 
 function isAuthenticated (req, res, next) {
   if (req.session.user) {console.log("oh"); next(); }
   else {res.send("chal hat")}
 }
-
-// io.engine.use(sessionmiddleware);
 
 app.use(bodyParser.json({ extended: true }));
 app.use(express.urlencoded({
@@ -116,15 +93,6 @@ app.use(morgan('combined'));
 
 
 
-
-
-
-
-
-app.get('/' , (req,res) => {
-  res.send("okay");
-})
-
 app.get('/trade' , async (req,res) => 
 {
   let { data: trades, error } = await supabase
@@ -134,8 +102,6 @@ app.get('/trade' , async (req,res) =>
   res.send(trades);
 
 })
-
-
 
 
 app.post("/register" , cors(corop) ,  async (req,res) =>
@@ -168,8 +134,6 @@ app.post("/register" , cors(corop) ,  async (req,res) =>
 
     res.send("success");
 
-
-
     });
 
     }
@@ -179,48 +143,11 @@ catch(err)
 {
    
 }
-   
-    
-
-
-})
-
-app.get("/axios" , async(req,res) => {
-
-  //   const { data} = supabase
-  // .storage
-  // .from('image')
-  // .getPublicUrl('image/front/item0/item.png');
-
-  // res.send(data);
-  // console.log((req.session.user.items));
-
-  // req.session.user.items= req.session.user.items++;
-
-  // console.log(req.session.user.items);
-  
-
-
-console.log(req.session.user)
-res.send("theek");
-  
 
 })
 
 
 
-
-
-
-app.get("/register" , async (req,res) =>
-{
-  res.send("hm");
-})
-
-const array = [
-    
-    {name: 'item' , maxCount: 1}
-]
 
 app.get('/logout' , async(req,res) => {
   console.log("ahs")
@@ -236,16 +163,24 @@ req.session.destroy(err => {
 
 });
 
+const array = [
+    
+    {name: 'item' , maxCount: 1}
+]
 
 
   app.post("/new-item" , isAuthenticated , upload.fields(array) , async(req , res , next) =>
 {
+<<<<<<< HEAD
     console.log(req);
 
 
   
 
 
+=======
+  console.log(req.body)
+>>>>>>> 73f8b06 ( organisedxs)
     const file = req.files.item[0];
     const fileBase64 = decode(file.buffer.toString("base64"));
     await supabase.storage.from('image').upload( '/' + req.session.user.username + '/item' + req.session.user.items + '/item.png' , fileBase64, {contentType: "image/png",})
@@ -260,26 +195,21 @@ req.session.destroy(err => {
    await supabase
   .from('trades')
   .insert([
-    {path: data.publicUrl , desc: req.body.desc , basep: req.body.basep , name: req.body.name , dur: req.body.dur },
+    {path: data.publicUrl , desc: req.body.desc , basep: req.body.basep , name: req.body.name  , endtime: req.body.dur , user: req.body.user},
   ])
   .select()
-
 
     await supabase.from('Users').update({ items: req.session.user.items + 1 }).eq('username', req.session.user.username).select();
     req.session.user.items = req.session.user.items + 1;
     console.log(req.session.user.items);
 
-    res.send("bhaiyar")
         
-    
-        
-
 })
 
 app.get('/auth' , async(req , res) => {
 
   console.log(req.session);
-  if(req.session.user != null)
+  if(req.session.user)
   {
     res.send({user: req.session.user});
   }
@@ -288,23 +218,13 @@ app.get('/auth' , async(req , res) => {
   }
 })
 
+app.post('/login' , async(req,res) => {
 
-
-
-
-
-
-        app.post('/login' , async(req,res) => {
-
-          req.session.regenerate(function (err) {
-          if (err) next(err)
-          })
-
+  req.session.regenerate(function (err) {
+    if (err) next(err)
+     })
           const {username , password} = req.body;
-
-
-          console.log(username);
-        const result = await supabase
+          const result = await supabase
         .from('Users')
         .select()
         .eq('username', username);
@@ -315,27 +235,17 @@ app.get('/auth' , async(req , res) => {
           bcrypt.compare(password, storedHashedPassword, (err, valid) => {
             if (err) {
               console.error("Error comparing passwords:", err);
-              res.redirect('/axios');
             } else {
               if (valid) {
                 req.session.user = user;
-                req.session.save(function(err) {
-  // session saved
-})
-                
-                console.log("hmm");
+                req.session.save(function(err) {})
                 res.send(req.session);
               } else {
-                console.log("wtf");
                 res.send(req.session);
               }
             }
           });
-        } else {
-          console.log("bhag be");
-          res.redirect('/axios');
-        }
-
+        } else {}
         })
        
 
