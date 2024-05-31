@@ -42,33 +42,19 @@ export default function Signup()
           }
 }
 
-
-
     return(
-
         log ? <Navigate to = '/login' /> :
-
-        <div>
-
-        
+        <div>  
         <form onSubmit={handle}>
              <TextField id="username" label="Username" variant="outlined" value = {user} onChange={(e) => {setUser(e.target.value)}} />
              <br></br>
             <TextField id="password" label="password" variant="outlined" value = {pass} onChange={(e) => {setPass(e.target.value)}} />
             <br></br>
-            <input type = "submit" ></input>
-       
+            <input type = "submit" ></input>  
         </form>
-
         <Link to = '/login'>
-
         <Button variant="text">Login</Button>
-
         </Link>
-
         </div>
-        
-        
-        
     )
 }

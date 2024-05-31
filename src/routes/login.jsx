@@ -4,15 +4,13 @@ import axios from "axios"
 import { Link } from 'react-router-dom';
 import { Button } from '@mui/material';
 import { Navigate } from 'react-router-dom';
-import { redirect } from "react-router-dom";
 
 
 
 
 
 
-
-export default function Login({log , lo}) 
+export default function Login({log , lo , usern}) 
 {
     
 
@@ -33,13 +31,9 @@ export default function Login({log , lo})
 
            if(respo.data.user)
            {
-            log();
+            usern(respo.data.user.username);
+            log(true);
             setAuth(false);
-            //etLoading(false);
-            
-            
-            console.log(auth);
-        //    return redirect('/dashboard')
            }
            else{
             alert("invalid");
@@ -51,13 +45,6 @@ export default function Login({log , lo})
           {
              
           }
-
-        //   if(loading)
-        //   {
-        //     return (
-        //         <div>loading...</div>
-        //     )
-        //   }
 }
 
 
@@ -81,21 +68,11 @@ export default function Login({log , lo})
        
       <Link to = '/signup'>
         <Button variant="text">Signup</Button>
-
         </Link>
-      
-
-        
-
-
 
         </div>
 
-        : <Navigate to = '/homepage/trades' />
+                  : <Navigate to = '/homepage/trades' />
         
     )
-
-
-
-
 }

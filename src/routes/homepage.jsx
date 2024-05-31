@@ -14,37 +14,21 @@ import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import MailIcon from '@mui/icons-material/Mail';
 import './new.css';
 import { Navigate, useNavigate , Link } from 'react-router-dom';
-//import Login from '../login';
 import { Outlet } from "react-router-dom";
-//import {Socket} from '../socket.js';
-import axios from 'axios';
 import {useCookies}   from 'react-cookie';
 
 
-
-
-
 export default function Nav({auth , user}) {
+
   const [open, setOpen] = React.useState(false);
-  
-
-const [cookies, setCookie, removeCookie] = useCookies(['connect.sid']);
-
-
-
-
+  const [cookies, setCookie, removeCookie] = useCookies(['connect.sid']);
 
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
   };
 
-
   const DrawerList = (
-
-
-    
-
     <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
       <List>
         {[{text: "Dashboard" , link: "/homepage/trades"}, {text: "Dashboard" , link: "/Dashboard"} , {text: "Dashboard" , link: "/Dashboard"}, {text: "Dashboard" , link: "/Dashboard"}].map((text, index) => (
@@ -65,9 +49,7 @@ const [cookies, setCookie, removeCookie] = useCookies(['connect.sid']);
       </List>
       <Divider />
       <List>
-
       <input type = 'submit' onClick={() => removeCookie({path: '/'})}></input>
-  
       </List>
     </Box>
   );
@@ -81,11 +63,10 @@ const [cookies, setCookie, removeCookie] = useCookies(['connect.sid']);
       <Drawer open={open} onClose={toggleDrawer(false)}>
         {DrawerList}
       </Drawer>
-      <Outlet />
+      <Outlet/>
+      
     </Box>
     
-
-
     : <Navigate to  = '/login'/> 
   );
 }
